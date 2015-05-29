@@ -1,0 +1,15 @@
+{snippet}
+{if $messages}
+	<div class="alerts-container">
+		{foreach $messages as $message}
+			<div class='alert {$message->type ? ('alert-'.$message->type)}'>
+				{ifset $message->icon}
+					<i class="{$message->icon}"></i>
+				{/ifset}
+				{$message->message}
+				<a class="close" data-dismiss="alert" href="#">&times;</a>
+			</div>
+		{/foreach}
+	</div>
+{/if}
+{/snippet}

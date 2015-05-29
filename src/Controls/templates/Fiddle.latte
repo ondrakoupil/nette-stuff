@@ -1,0 +1,58 @@
+<div class="fiddle-container spinner-container" n:snippet="all">
+
+	<div class="row">
+
+		<div class="span6">
+
+			{form form}
+
+				<div>
+					{input source style=>"width: 100%; font-family: monospace, typewriter; font-size: 13px; min-height: 300px"}
+					<br />
+					<small>You can use: <b>$context</b>, <b>$presenter</b></small>
+				</div>
+
+				<br />
+
+				<div class="inline-labels">
+					{input submit} &nbsp; &nbsp; &nbsp; {input output}
+				</div>
+
+			{/form}
+
+			{if $history}
+				<ol>
+					<li n:foreach="$history as $index=>$hist">
+						<a class="ajax" n:href='history! $index'>{$hist|truncate:100}</a>
+					</li>
+				</ol>
+			{/if}
+
+		</div>
+
+		<div class="span6">
+			{if $output}
+				{if $format == "html"}
+					{!$output}
+				{else}
+					<pre>{$output}</pre>
+				{/if}
+			{/if}
+		</div>
+
+	</div>
+
+	<script type="text/javascript">
+		$(function() {
+			$(".fiddle-container .inline-labels label").addClass("radio inline").each(function() {
+				$(this).prev().appendTo(this);
+				var $next = $(this).next();
+				if ($next.is("br")) {
+					$next.remove();
+				}
+			});
+		});
+	</script>
+
+</div>
+
