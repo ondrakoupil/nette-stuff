@@ -8,7 +8,7 @@ namespace OndraKoupil\Nette\Forms;
 class GenericArrayControl extends \Nette\Forms\Controls\HiddenField {
 
 	function setValue($value) {
-		$this->value = Tools::arrayize($value);
+		$this->value = \OndraKoupil\Tools\Arrays::arrayize($value);
 		return $this;
 	}
 

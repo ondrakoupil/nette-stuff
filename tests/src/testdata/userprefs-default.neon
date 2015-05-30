@@ -1,0 +1,10 @@
+page: 1
+perpage: 10
+name: unknown
+some-array:
+	- a
+	- d
+	- x
+some-object:
+	width: 100
+	height: 200

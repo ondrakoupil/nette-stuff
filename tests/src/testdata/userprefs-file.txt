@@ -1,0 +1,1 @@
+a:5:{s:6:"letter";s:1:"A";s:6:"number";i:10;s:5:"array";a:4:{i:0;i:10;i:1;i:11;i:2;i:12;i:3;i:13;}s:5:"assoc";a:2:{s:5:"color";s:4:"Blue";s:4:"size";s:2:"XL";}s:8:"long key";s:3:"yes";}
