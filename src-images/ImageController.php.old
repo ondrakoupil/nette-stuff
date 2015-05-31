@@ -1,0 +1,353 @@
+<?php
+
+namespace OndraKoupil\Images;
+
+///TODO: tests for ImageController
+class ImageController {
+
+	protected $baseLocation;
+	protected $basePublicPath;
+	protected $defaultVersion="";
+	protected $defaultLinkVersion="";
+	protected $versions=array();
+	protected $nullImage="";
+	protected $defaultNotFound="";
+
+	/**
+	 * @param string $baseLocation Cesta k základnímu adresáři (ve kterém je verze ""). Lomítko na konci se v případě potřeby přidá automaticky.
+	 * @param string $publicPath Cesta pro veřejnost
+	 * @param array $versions Jednoduchá definice verzí, jde o dvourozměrné array ve tvaru [verze] => array($width,$height)
+	 * @param string $defaultVersion
+	 * @param string $nullImage
+	 * @param string $defaultLinkVersion Viz UniversalImage
+	 */
+	function __construct($baseLocation="",$publicPath="",$versions=array(),$defaultVersion="",$nullImage="", $defaultLinkVersion="", $defaultNotFound="") {
+		if ($baseLocation) $this->baseLocation($baseLocation);
+		if ($publicPath) $this->basePublicPath ($publicPath);
+		if ($defaultVersion) $this->defaultVersion($defaultVersion);
+		if ($versions) $this->versions($versions);
+		if ($nullImage) $this->nullImage($nullImage);
+		if ($defaultLinkVersion) $this->defaultLinkVersion($defaultLinkVersion);
+		if ($defaultNotFound) $this->defaultNotFound($defaultNotFound);
+	}
+
+	/**
+	 * GetSetter. Lomítko na konci se v případě potřeby přidá automaticky.
+	 * @param string $baseLocation
+	 * @return ImageController|string
+	 */
+	function baseLocation($baseLocation= null) {
+		if (func_num_args() == 1) {
+			if (substr($baseLocation,-1)!="/") $baseLocation.="/";
+			$this->baseLocation=$baseLocation;
+			return $this;
+		}
+		return $this->baseLocation;
+	}
+
+	function basePublicPath($basePublicPath= null) {
+		if (func_num_args() == 1) {
+			$this->basePublicPath= $basePublicPath;
+			return $this;
+		}
+		return $this->basePublicPath;
+	}
+
+	/**
+	 * GetSetter pro název souboru (jen název souboru, ne cestu) pro nulový obrázek.
+	 * @param string $nullImage
+	 * @return ImageController|string
+	 */
+	function nullImage($nullImage= null) {
+		if (func_num_args() == 1) {
+			$this->nullImage=$nullImage;
+			return $this;
+		}
+		return $this->nullImage;
+	}
+
+	function defaultNotFound($defaultNotFound= null) {
+		if (func_num_args() == 1) {
+			$this->defaultNotFound= $defaultNotFound;
+			return $this;
+		}
+		return $this->defaultNotFound;
+	}
+
+	/**
+	 * GetSetter
+	 * @param string|bool $defaultLinkVersion
+	 * @return ImageController|string|bool
+	 */
+	function defaultLinkVersion($defaultLinkVersion=null) {
+		if (func_num_args() == 1) {
+			$this->defaultLinkVersion=$defaultLinkVersion;
+			return $this;
+		}
+		return $this->defaultLinkVersion;
+	}
+
+	/**
+	 * GetSetter pro defaultní verzi
+	 * @param string $defaultVersion
+	 * @return ImageController
+	 */
+	function defaultVersion($defaultVersion=null) {
+		if (func_num_args() == 1) {
+			$this->defaultVersion=$defaultVersion;
+			return $this;
+		}
+		return $this->defaultVersion;
+	}
+
+	/**
+	 * GetSetter pro verze - formát viz konstruktor
+	 * @param array $versions
+	 * @return ImageController|array
+	 */
+	function versions($versions= null) {
+		if (func_num_args() == 1) {
+			if (!is_array($versions)) {
+				die("ImageController potřebuje mít zadány \$versions jako array, kde jsou v indexu názvy jednotlivých verzí a hodnoty jsou array o dvou prvcích - šířce a výšce.");
+			}
+			foreach($versions as $i=>$v) {
+				if (!is_array($v) or count($v)!=2 or !isset($v[0]) or !isset($v[1])) {
+					die("ImageController - zadaná \$version[$i] je nějaká divná.");
+				}
+			}
+			$this->versions= $versions;
+			return $this;
+		}
+		return $this->versions;
+	}
+
+	/**
+	 * Vymaže všechny dosavadní definované verze
+	 * @return ImageController
+	 */
+	function clearVersions() {
+		$this->versions=array();
+		return $this;
+	}
+
+	/**
+	 * Dodefinuje jednu verzi. Přehlednější, ale pomalejší způsob, než zadávat array do $versions.
+	 * @param string $name
+	 * @param string|int $width Podporuje i postfixy "c", "x" atd.
+	 * @param int $height
+	 * @return ImageController
+	 */
+	function addVersion($name,$width,$height) {
+		$this->versions[$name]=array($width,$height);
+		return $this;
+	}
+
+	/**
+	 * Zjistí příponu ze zadaného jména souboru.
+	 * @param string $filename
+	 * @return string Empty string, pokud přípona chybí.
+	 */
+	function pripona($filename) {
+		if (preg_match('~\.([a-z0-9]{1,5})\s*$~i',$filename, $parts)) {
+			return $parts[1];
+		}
+		return "";
+	}
+
+	/**
+	 * Vrátí celou cestu k souboru se zadaným $filename (z hlediska serveru)
+	 * @param string $filename
+	 * @param string|bool $version False = default verze
+	 * @return string
+	 */
+	function path($filename,$version=false) {
+		if (!$filename) return "";
+		if ($version===false) $version=$this->defaultVersion;
+		return $this->baseLocation.$version.($version?"/":"").$filename;
+	}
+
+	function src($filename,$version=false) {
+		if (!$filename) return "";
+		if ($version===false) $version=$this->defaultVersion;
+		return $this->basePublicPath.$version.($version?"/":"").$filename;
+	}
+
+	/**
+	 * Ověří, zda obrázek se zadaným Filename existuje a je na disku.
+	 * @param string $filename
+	 * @param string|bool|array $version False = defaultní verze, true = postupně ověřit všechny verze. Array nebo string = ověřit zadané verze.
+	 * @return boolean
+	 */
+	function exists($filename,$version=false) {
+		if ($version===true or is_array($version)) {
+			if ($version===true) $version=array_keys($this->versions);
+			foreach($version as $v) {
+				$ok=$this->exists($filename,$v);
+				if (!$ok) return false;
+			}
+			return true;
+		}
+		$path=$this->path($filename, $version);
+		if (file_exists($path) and !is_dir($path)) return true;
+		return false;
+	}
+
+	/**
+	 * Vrátí celou cestu k adresáři se zadanými verzemi
+	 * @param string|bool $version False = default verze
+	 * @return string
+	 */
+	function dirPath($version=false) {
+		if ($version===false) $version=$this->defaultVersion;
+		return $this->baseLocation.$version.($version?"/":"");
+	}
+
+	/**
+	 * Vytvoří nakonfigurovaný objekt UniversalImage připravený k použití
+	 * @param string $filename
+	 * @param string $alt
+	 * @return UniversalImage
+	 */
+	function image($filename,$alt="") {
+		if (!$alt) $alt=$filename;
+		if ($this->nullImage) {
+			if (!file_exists($this->path($filename))) {
+				$filename=$this->nullImage;
+			}
+		}
+		$i=new UniversalImage($filename, $this->baseLocation, $this->basePublicPath, $alt, array_keys($this->versions), $this->defaultVersion, $this->defaultLinkVersion, $this->defaultNotFound);
+		return $i;
+	}
+
+	function createComponent($filename,$alt="") {
+		return $this->image($filename, $alt);
+	}
+
+	/**
+	 * Alias pro image()
+	 * @see image()
+	 * @param string $filename
+	 * @param string $alt
+	 * @return UniversalImage
+	 */
+	function universalImage($filename,$alt) {
+		return $this->image($filename,$alt);
+	}
+
+	/**
+	 * Smaže z disku serveru všechny verze obrázku
+	 * @param string $filename
+	 */
+	function delete($filename) {
+		if (!$filename) return;
+		foreach($this->versions as $version=>$sizes) {
+			$path=$this->path($filename,$version);
+			if (file_exists($path) and !is_dir($path)) {
+				unlink($path);
+			}
+		}
+	}
+
+	/**
+	 * Přidá nový soubor a vytvoří mu jednotlivé verze
+	 * @param string $sourceFileName Celá cesta ke zdrojovému obrázku
+	 * @param string|bool $desiredFileName Jen požadované jméno (bez cesty!), nebo false = vytvoř automaticky.
+	 * @return boolean|string False při chybě, nebo stringové jméno pro vytvořený soubor
+	 */
+	function add($sourceFileName,$desiredFileName=false) {
+		if (!$desiredFileName) $desiredFileName=basename($sourceFileName);
+		if ($this->pripona($desiredFileName)=="") {
+			$desiredFileName.=".".$this->pripona($sourceFileName);
+		}
+		foreach($this->versions as $version=>$sizes) {
+			$target=$this->dirPath($version);
+			if (!is_writable($target)) {
+				//Echo protože tuto chybu způsobuje špatné nastavení Controlleru a musí ji opravit programátor.
+				echo "Chyba - nelze zapisovat do adresáře $target";
+				return false;
+			}
+			$targetFile=$this->path($desiredFileName,$version);
+			if (file_exists($targetFile)) unlink($targetFile);
+			$ok=resamplePodminene($sourceFileName, $targetFile, $sizes[0], $sizes[1], false, false, 0, true);
+			if (!$ok) {
+				//Say protože chybu může způsobit uživatel tím, že vybere blbý soubor, co není obrázek
+				say("Nastala chyba při změně velikosti obrázku!",true);
+				return false;
+			} else {
+				chmod($targetFile,0666);
+			}
+		}
+		return $desiredFileName;
+	}
+
+	/**
+	 * Zkopíruje obrázek a všechny jeho verze.
+	 * @param string $oldFilename Původní filename (basename, bez cesty)
+	 * @param string $desiredFileName Požadované nové jméno (bez cesty, může být i bez přípony). Pokud je stejné s $oldFilename, skončí to chybou.
+	 * @return boolean|string False při chybě, nové filename při úspěchu.
+	 */
+	function duplicate($oldFilename,$desiredFileName) {
+		if (!$desiredFileName) $desiredFileName=basename($oldFilename);
+		if ($this->pripona($desiredFileName)=="") {
+			$desiredFileName.=".".$this->pripona($oldFilename);
+		}
+		if ($oldFilename==$desiredFileName) return false;
+
+		foreach($this->versions as $version=>$sizes) {
+			$targetDir=$this->dirPath($version);
+			if (!is_writable($targetDir)) {
+				echo "Chyba - nelze zapisovat do adresáře $targetDir";
+				return false;
+			}
+			$sourceFile=$this->path($oldFilename,$version);
+			$targetFile=$this->path($desiredFileName,$version);
+			if (file_exists($targetFile)) unlink($targetFile);
+			$ok=copy($sourceFile,$targetFile);
+			if (!$ok) {
+				say("Selhalo kopírování obrázku!",true);
+				return false;
+			} else {
+				chmod($targetFile,0666);
+			}
+		}
+		return $desiredFileName;
+	}
+
+
+	/**
+	 * Podobné jako add(), ale přijímá ID souboru ze Správce souboru
+	 * @param int $fileId
+	 * @param string|bool $desiredFileName False = odvoď automaticky dle originálu
+	 * @return string|bool False při chybě, string filename při úspěchu
+	 */
+	function import($fileId,$desiredFileName=false) {
+		$u=spravceSouboru($fileId);
+		return $this->add($u["path"],$desiredFileName);
+	}
+
+	/**
+	 * Nahradí všechny verze starého souboru jiným.
+	 * @param string $oldFilename Filename bez cesty starého souboru
+	 * @param string $sourceFileName Cesta k novému zdrojovému souboru
+	 * @param string|bool $desiredFileName False = neměň, nech původní z $oldFilename.
+	 * @return string False při chybě, string filename při úspěchu
+	 */
+	function update($oldFilename,$sourceFileName,$desiredFileName=false) {
+		if ($desiredFileName===false and $oldFilename) $desiredFileName=$oldFilename;
+		$this->delete($oldFilename);
+		return $this->add($sourceFileName,$desiredFileName);
+	}
+
+	/**
+	 * Podobné jako update(), ale pracuje se Správcem souborů.
+	 * @param string $oldFilename Filename bez cesty starého souboru
+	 * @param int $newFileId
+	 * @param string|bool $desiredFileName False = neměň, nech původní z $oldFilename.
+	 * @return string False při chybě, string filename (jen basename) při úspěchu
+	 */
+	function updateAndImport($oldFilename,$newFileId,$desiredFileName=false) {
+		if ($desiredFileName===false and $oldFilename) $desiredFileName=$oldFilename;
+		$this->delete($oldFilename);
+		return $this->import($newFileId,$desiredFileName);
+	}
+}

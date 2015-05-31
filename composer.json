@@ -18,7 +18,8 @@
     },
     "autoload": {
         "psr-4": {
-            "OndraKoupil\\Nette\\": "src/"
+            "OndraKoupil\\Nette\\": "src/",
+            "OndraKoupil\\Images\\": "src-images/"
         }
     },
 	"suggest": {
