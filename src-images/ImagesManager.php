@@ -2,9 +2,9 @@
 
 namespace OndraKoupil\Images;
 
-use \OndraKoupil\ToolsFiles;
+use \OndraKoupil\Tools\Files;
 use \OndraKoupil\Logger;
-use \OndraKoupil\Tools;
+use \OndraKoupil\Tools\Time;
 
 /**
 * @deprecated Will use Palette somedays
@@ -166,7 +166,7 @@ class ImagesManager extends \Nette\Object {
 
 		if ($sourceMTime>$transformedMTime) {
 			$this->invalidateDatabaseRow($u,"original file is newer (see next row in this log)");
-			$this->invalidateFile($u["output"], "original file is newer (source ".Tools::convertTime($sourceMTime, Tools::TIME_MYSQL)." vs. transformed ".Tools::convertTime($transformedMTime, Tools::TIME_MYSQL).")");
+			$this->invalidateFile($u["output"], "original file is newer (source ".Time::convert($sourceMTime, Time::MYSQL)." vs. transformed ".Time::convert($transformedMTime, Time::MYSQL).")");
 			return false;
 		}
 
@@ -176,7 +176,7 @@ class ImagesManager extends \Nette\Object {
 	function invalidateFile($filename, $detailsToLog="") {
 		$this->writeToLog("Deleting \"$filename\"".($detailsToLog?", $detailsToLog":""));
 		if (file_exists($filename) and !is_dir($filename)) {
-			ToolsFiles::remove($filename);
+			Files::remove($filename);
 		}
 	}
 
@@ -201,7 +201,7 @@ class ImagesManager extends \Nette\Object {
 		$tooOldFiles=$this->getTable()->where("last_access < ?",time()-$this->ttl);
 
 		foreach($tooOldFiles as $file) {
-			$reason="Thumbnail not used too long, probably forgotten (last access ".Tools::convertTime($file["last_access"], Tools::TIME_MYSQL).")";
+			$reason="Thumbnail not used too long, probably forgotten (last access ".Time::convert($file["last_access"], Time::MYSQL).")";
 			$this->invalidateFile($file["output"], $reason);
 			$this->invalidateDatabaseRow($file, $reason);
 		}

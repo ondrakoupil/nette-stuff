@@ -2,7 +2,7 @@
 
 namespace OndraKoupil\Images;
 
-use \OndraKoupil\ToolsFiles;
+use \OndraKoupil\Tools\Files;
 use Nette\Utils\Strings;
 
 /**
@@ -33,18 +33,18 @@ class SimpleFileFinder implements IFileFinder {
 		$this->baseHref[] = $baseHref;
 		$this->baseOutputPath[] = $baseOutputPath;
 		$this->baseOutputHref[] = $baseOutputHref;
-		ToolsFiles::mkdir($baseOutputPath);
+		Files::mkdir($baseOutputPath);
 	}
 
 	function getPath($source,$signature,$freeFilename=true) {
 		foreach($this->basePath as $i=>$basePath) {
 			if (Strings::startsWith($source, $basePath)) {
-				$path=ToolsFiles::rebasedFilename($source, $basePath, $this->baseOutputPath[$i]."/".substr($signature,0,4));
-				$dir=ToolsFiles::dir($path);
-				if (!file_exists($dir))	ToolsFiles::mkdir($dir);
+				$path=Files::rebasedFilename($source, $basePath, $this->baseOutputPath[$i]."/".substr($signature,0,4));
+				$dir=Files::dir($path);
+				if (!file_exists($dir))	Files::mkdir($dir);
 				if ($freeFilename) {
-					$filename=ToolsFiles::filename($path);
-					$path=$dir."/".ToolsFiles::freeFilename($dir, $filename);
+					$filename=Files::filename($path);
+					$path=$dir."/".Files::freeFilename($dir, $filename);
 				}
 				return $path;
 			}
@@ -55,14 +55,14 @@ class SimpleFileFinder implements IFileFinder {
 	public function getHrefFromPath($path) {
 		foreach($this->baseOutputPath as $i=>$baseOutputPath) {
 			if (Strings::startsWith($path, $baseOutputPath)) {
-				return ToolsFiles::rebasedFilename($path, $baseOutputPath, $this->baseOutputHref[$i]);
+				return Files::rebasedFilename($path, $baseOutputPath, $this->baseOutputHref[$i]);
 			}
 		}
 		foreach($this->basePath as $i=>$basePath) {
 			if (Strings::startsWith($path, $basePath)) {
 				$href=$this->baseHref[$i];
 				if ($href) {
-					return ToolsFiles::rebasedFilename($path, $basePath, $href);
+					return Files::rebasedFilename($path, $basePath, $href);
 				}
 			}
 		}

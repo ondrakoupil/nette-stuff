@@ -2,7 +2,6 @@
 
 namespace OndraKoupil\Images;
 
-use \OndraKoupil\Tools;
 use Nette\Templating\Helpers;
 
 /**
