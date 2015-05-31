@@ -3,7 +3,7 @@
 namespace OndraKoupil\Images;
 
 use \OndraKoupil\Tools\Files;
-use \OndraKoupil\Logger;
+use \OndraKoupil\Nette\Logger;
 use \OndraKoupil\Tools\Time;
 
 /**
@@ -13,7 +13,7 @@ use \OndraKoupil\Tools\Time;
 class ImagesManager extends \Nette\Object {
 
 	/**
-	 * @var \Nette\Database\Connection
+	 * @var \Nette\Database\Context
 	 */
 	private $db;
 
@@ -47,7 +47,7 @@ class ImagesManager extends \Nette\Object {
 
 	// TODO: Batch preloading from DB
 
-	function __construct(\Nette\Database\Connection $database, $tableName, IFileFinder $fileFinder, Logger $logger=null) {
+	function __construct(\Nette\Database\Context $database, $tableName, IFileFinder $fileFinder, Logger $logger=null) {
 		$this->db=$database;
 		$this->dbTableName=$tableName;
 		$this->fileFinder=$fileFinder;

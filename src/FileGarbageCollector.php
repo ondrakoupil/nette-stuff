@@ -85,7 +85,7 @@ class FileGarbageCollector extends \Nette\Object {
 
 	/**
 	 * @param string $directory Cesta ke hládanému adresáři, jehož obsah je uklízen
-	 * @param callable|Callback $callback Funkce, která rozhoduje, zda určitý soubor je smetí nebo není
+	 * @param callable $callback Funkce, která rozhoduje, zda určitý soubor je smetí nebo není
 	 * @param string $dataFilename Cesta k souboru (neměl by být v hlídaném adresáři!), do kterého si GC ukládá, kdy byl naposledy spuštěn
 	 * @param int $periodicity Počet sekund
 	 * @param Logger $logger

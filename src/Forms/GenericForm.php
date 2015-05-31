@@ -45,10 +45,10 @@ class GenericForm extends \Nette\Application\UI\Control {
 	}
 
 	/**
-	 * @param \Nette\Utils\Callback $callback receives this $genericForm, $form, $template
+	 * @param callback $callback receives this $genericForm, $form, $template
 	 */
-	function addRenderCallback(\Nette\Utils\Callback $callback) {
-		$this->renderCallbacks[]=$callback;
+	function addRenderCallback($callback) {
+		$this->renderCallbacks[]=  \Nette\Utils\Callback::check($callback);
 	}
 
 	function render($templatePath=false) {
@@ -62,7 +62,7 @@ class GenericForm extends \Nette\Application\UI\Control {
 		$this->template->form=$this->form;
 
 		foreach ($this->renderCallbacks as $cb) {
-			$cb->invokeArgs(array($this,$this->form,$this->template));
+			\Nette\Utils\Callback::invokeArgs($cb, array($this,$this->form,$this->template));
 		}
 
 		$this->template->render();
@@ -89,14 +89,14 @@ class GenericForm extends \Nette\Application\UI\Control {
 
 	static function createErrorMessagesControl(\Nette\Forms\Form $form) {
 		$messages = new \OndraKoupil\Nette\Controls\GenericMessagesControl();
-		$messages->addCallback(new \Nette\Utils\Callback(function(\OndraKoupil\GenericMessagesControl $messagesControl) use ($form) {
+		$messages->addCallback(function(\OndraKoupil\GenericMessagesControl $messagesControl) use ($form) {
 			$errs = $form->getErrors();
 			if ($errs) {
 				foreach($errs as $e) {
 					$messagesControl->addMessage($e, "danger");
 				}
 			}
-		}));
+		});
 
 		return $messages;
 	}

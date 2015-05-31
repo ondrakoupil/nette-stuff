@@ -10,7 +10,7 @@ class GenericMessagesControl extends \Nette\Application\UI\Control {
 	protected $messages = array();
 
 	/**
-	 * @var Callback array of Callback
+	 * @var array of callbacks
 	 */
 	protected $callbacks = array();
 
@@ -49,8 +49,8 @@ class GenericMessagesControl extends \Nette\Application\UI\Control {
 		return $this;
 	}
 
-	function addCallback(Callback $callback) {
-		$this->callbacks[] = $callback;
+	function addCallback($callback) {
+		$this->callbacks[] = Callback::check($callback);
 		return $this;
 	}
 
@@ -95,7 +95,7 @@ class GenericMessagesControl extends \Nette\Application\UI\Control {
 
 	protected function evalCallbacks() {
 		foreach ($this->callbacks as $cb) {
-			$cb->invokeArgs(array($this));
+			Callback::invokeArgs($cb, array($this));
 		}
 
 		$this->callbacks = array();
