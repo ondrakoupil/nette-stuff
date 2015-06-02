@@ -5,7 +5,7 @@ namespace OndraKoupil\Nette\Forms;
 /**
  * Virtual form field made for transporting boolean values.
  */
-class GenericArrayControl extends \Nette\Forms\Controls\HiddenField {
+class GenericBoolControl extends \Nette\Forms\Controls\HiddenField {
 
 	function setValue($value) {
 		$this->value = \OndraKoupil\Tools\Arrays::arrayize($value);
