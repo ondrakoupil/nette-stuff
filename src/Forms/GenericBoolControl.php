@@ -8,22 +8,23 @@ namespace OndraKoupil\Nette\Forms;
 class GenericBoolControl extends \Nette\Forms\Controls\HiddenField {
 
 	function setValue($value) {
-		$this->value = \OndraKoupil\Tools\Arrays::arrayize($value);
+		$this->value = $value ? true : false;
 		return $this;
 	}
 
 	function loadHttpData() {
 		$rawData = \Nette\Utils\Arrays::get( $this->getForm()->getHttpData(), $this->getHtmlName(), null);
+		if ($rawData === "0") $rawData = "";
 		try {
-			$this->setValue($rawData);
+			$this->setValue($rawData ? true : false);
 		} catch (\Exception $e) {
-			$this->value = array();
+			$this->value = false;
 		}
 		return $this;
 	}
 
 	function getControl() {
-		return null;
+		return new \Nette\Utils\Html();
 	}
 
 }

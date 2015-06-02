@@ -8,15 +8,14 @@ namespace OndraKoupil\Nette\Forms;
 class GenericArrayControl extends \Nette\Forms\Controls\HiddenField {
 
 	function setValue($value) {
-		$this->value = $value ? true : false;
+		$this->value = \OndraKoupil\Tools\Arrays::arrayize($value);
 		return $this;
 	}
 
 	function loadHttpData() {
 		$rawData = \Nette\Utils\Arrays::get( $this->getForm()->getHttpData(), $this->getHtmlName(), null);
-		if ($rawData === "0") $rawData = "";
 		try {
-			$this->setValue($rawData);
+			$this->setValue(\OndraKoupil\Tools\Arrays::arrayize($rawData));
 		} catch (\Exception $e) {
 			$this->value = false;
 		}
@@ -24,7 +23,7 @@ class GenericArrayControl extends \Nette\Forms\Controls\HiddenField {
 	}
 
 	function getControl() {
-		return null;
+		return new \Nette\Utils\Html();
 	}
 
 }
