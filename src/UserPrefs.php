@@ -77,7 +77,7 @@ class UserPrefs implements \ArrayAccess {
 	/**
 	 * @param string $key
 	 * @param mixed $value
-	 * @return \OndraKoupil\UserPrefs
+	 * @return \OndraKoupil\Nette\UserPrefs
 	 */
 	function set($key,$value) {
 		$this->loadIfNeeded();
@@ -89,7 +89,7 @@ class UserPrefs implements \ArrayAccess {
 	/**
 	 * Vyresetuje zpět na defaultní hodnotu.
 	 * @param string $key
-	 * @return \OndraKoupil\UserPrefs Fluent interface
+	 * @return \OndraKoupil\Nette\UserPrefs Fluent interface
 	 */
 	function reset($key) {
 		$this->loadIfNeeded();
@@ -109,7 +109,7 @@ class UserPrefs implements \ArrayAccess {
 	 * Předpokládá, že pod $key je uloženo array, přidá $value do pole.
 	 * @param string $key
 	 * @param mixed $value
-	 * @return \OndraKoupil\UserPrefs
+	 * @return \OndraKoupil\Nette\UserPrefs
 	 * @throws \InvalidArgumentException Pokud $key vůbec není pole
 	 */
 	function add($key,$value) {
@@ -151,7 +151,7 @@ class UserPrefs implements \ArrayAccess {
 	 * @param int $saveMethod Jedna z třídních konstant DB, FILE nebo SESSION
 	 * @param mixed $saveArg1
 	 * @param mixed $saveArg2
-	 * @return \OndraKoupil\UserPrefs
+	 * @return \OndraKoupil\Nette\UserPrefs
 	 * @throws \InvalidArgumentException
 	 */
 	function setup($saveMethod,$saveArg1=null,$saveArg2=null) {
@@ -204,7 +204,7 @@ class UserPrefs implements \ArrayAccess {
 
 	/**
 	 * Pokud je potřeba, načte data z úložiště
-	 * @return \OndraKoupil\UserPrefs
+	 * @return \OndraKoupil\Nette\UserPrefs
 	 * @throws \Nette\InvalidStateException
 	 * @throws \RuntimeException
 	 */
@@ -269,7 +269,7 @@ class UserPrefs implements \ArrayAccess {
 
 	/**
 	 * Pokdu je potřeba, uloží data do úložiště
-	 * @return \OndraKoupil\UserPrefs
+	 * @return \OndraKoupil\Nette\UserPrefs
 	 */
 	function saveIfNeeded() {
 		if ($this->wasChanged) {

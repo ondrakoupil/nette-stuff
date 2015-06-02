@@ -89,7 +89,7 @@ class GenericForm extends \Nette\Application\UI\Control {
 
 	static function createErrorMessagesControl(\Nette\Forms\Form $form) {
 		$messages = new \OndraKoupil\Nette\Controls\GenericMessagesControl();
-		$messages->addCallback(function(\OndraKoupil\GenericMessagesControl $messagesControl) use ($form) {
+		$messages->addCallback(function(\OndraKoupil\Nette\Controls\GenericMessagesControl $messagesControl) use ($form) {
 			$errs = $form->getErrors();
 			if ($errs) {
 				foreach($errs as $e) {
