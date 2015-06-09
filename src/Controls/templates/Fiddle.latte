@@ -14,9 +14,14 @@
 
 				<br />
 
+				<p>{input submit}</p>
+
+				<p>{input output}</p>
+				{*
 				<div class="inline-labels">
 					{input submit} &nbsp; &nbsp; &nbsp; {input output}
 				</div>
+				  *}
 
 			{/form}
 
@@ -41,18 +46,5 @@
 		</div>
 
 	</div>
-
-	<script type="text/javascript">
-		$(function() {
-			$(".fiddle-container .inline-labels label").addClass("radio inline").each(function() {
-				$(this).prev().appendTo(this);
-				var $next = $(this).next();
-				if ($next.is("br")) {
-					$next.remove();
-				}
-			});
-		});
-	</script>
-
 </div>
 

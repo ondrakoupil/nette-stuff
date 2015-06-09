@@ -84,8 +84,9 @@ class GenericMessagesControl extends \Nette\Application\UI\Control {
 		if (!isset($messageObj->icon) or !$messageObj->icon) {
 			$messageObj->icon = null;
 		} else {
-			if (substr($messageObj->icon, 0, 5) != "icon-") {
-				$messageObj->icon = "icon-".$messageObj->icon;
+			if (substr($messageObj->icon, 0, 5) != "icon-" and substr($messageObj->icon, 0, 3) != "fa-") {
+				// $messageObj->icon = "icon-".$messageObj->icon;
+				$messageObj->icon = "fa-".$messageObj->icon;
 			}
 		}
 

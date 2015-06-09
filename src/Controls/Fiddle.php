@@ -32,7 +32,8 @@ class Fiddle extends \Nette\Application\UI\Control {
 			->addRule(Form::FILLED, "Vyplň zdroják!");
 
 		$form->addRadioList("output", "Typ výstupu", array("text" => "Text", "html" => "Html"))
-			->setDefaultValue("text");
+			->setDefaultValue("text")
+			->getControlPrototype()->style["margin-right"] = "6px";
 
 		$form["output"]->addRule(Form::FILLED, "Vyber typ výstupu!");
 
