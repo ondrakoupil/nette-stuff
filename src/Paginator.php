@@ -154,6 +154,15 @@ class Paginator extends \Nette\Object {
 	}
 
 	/**
+	 * Aplikuje omezení do dotazu přes Nette Database
+	 * @param \Nette\Database\Table\Selection $selection
+	 * @return \Nette\Database\Table\Selection 
+	 */
+	function applyLimit(\Nette\Database\Table\Selection $selection) {
+		return $selection->limit($this->getSqlLimitNumber(), $this->getSqlOffset());
+	}
+
+	/**
 	 * Vrátí kus SQL kódu do klauzule OFFSET
 	 * @return number
 	 */
