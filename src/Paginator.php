@@ -146,11 +146,28 @@ class Paginator extends \Nette\Object {
 	}
 
 	/**
-	 * Vrátí kus SQL kódu do klauzule LIMIT
+	 * Vrátí kus SQL kódu do klauzule LIMIT jako řetězec "offset, limit"
 	 * @return string X,Y
 	 */
 	function getSqlLimit() {
 		return ($this->getShowingItemsFrom()-1).", ".$this->itemsPerPage;
+	}
+
+	/**
+	 * Vrátí kus SQL kódu do klauzule OFFSET
+	 * @return number
+	 */
+	function getSqlOffset() {
+		return ($this->getShowingItemsFrom()-1);
+	}
+
+	/**
+	 * Vrátí kus kódu do klauzule LIMIT, pouze jedno číslo.
+	 * Vhodné do Nette Database, kde je potřeba to rozdělit na dvě hodnoty.
+	 * @return number
+	 */
+	function getSqlLimitNumber() {
+		return $this->itemsPerPage;
 	}
 
 	/**
