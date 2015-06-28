@@ -10,11 +10,11 @@
     ],
     "require": {
         "nette/nette": "^2.3",
-		"ondrakoupil/tools": "^0.0.4"
+		"ondrakoupil/tools": "^0.0.5"
     },
     "require-dev": {
         "nette/tester": "^1.4",
-        "ondrakoupil/testing-utils": "^0.0.6"
+        "ondrakoupil/testing-utils": "^0.0.7"
     },
     "autoload": {
         "psr-4": {
