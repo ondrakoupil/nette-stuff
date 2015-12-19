@@ -16,6 +16,12 @@ class GenericMessagesControl extends \Nette\Application\UI\Control {
 
 	protected $hideIfEmpty = false;
 
+	/**
+	 * @param type $parent
+	 * @param type $name
+	 * @param array $messages
+	 * @see addMessage
+	 */
 	function __construct($parent=null, $name=null, $messages = array()) {
 
 		if ($messages) {
@@ -41,6 +47,10 @@ class GenericMessagesControl extends \Nette\Application\UI\Control {
 		return $this->messages;
 	}
 
+	/**
+	 * @param array $messages Array of items that accepts addMessage()
+	 * @return GenericMessagesControl
+	 */
 	function addMessages($messages) {
 		$messages = Arrays::arrayize($messages);
 		foreach($messages as $m) {
@@ -49,12 +59,43 @@ class GenericMessagesControl extends \Nette\Application\UI\Control {
 		return $this;
 	}
 
+	/**
+	 * Each callback gets evaluated just before rendering
+	 * @param callable $callback function($thisObject) {...}
+	 * @return GenericMessagesControl
+	 */
 	function addCallback($callback) {
 		$this->callbacks[] = Callback::check($callback);
 		return $this;
 	}
 
+	/**
+	 * Message can be:
+	 *
+	 * - string
+	 * - Nette HTML object
+	 * - Array with [message] and optionally [type] and [icon]
+	 * - Object with [message] and optionally [type] and [icon]
+	 *
+	 * If array or object, arguments $type and $icon are ignored.
+	 *
+	 * @param string|array|object\Nette\Utils\Html $message
+	 * @param string|bool $type Either string class, or true (success) or false (error)
+	 * @param string $icon
+	 * @return \OndraKoupil\Nette\Controls\GenericMessagesControl
+	 * @throws \InvalidArgumentException
+	 */
 	function addMessage($message, $type = "", $icon = "") {
+
+		if ($type === "error") {
+			$type = "danger";
+		}
+		if ($type === FALSE) {
+			$type = "danger";
+		}
+		if ($type === TRUE) {
+			$type = "success";
+		}
 
 		if (is_string($message)) {
 			$messageObj = new \stdClass();
@@ -69,6 +110,11 @@ class GenericMessagesControl extends \Nette\Application\UI\Control {
 			} else {
 				$messageObj = Arrays::toObject($message);
 			}
+		} elseif (is_object($message) and $message instanceof \Nette\Utils\Html) {
+			$messageObj = new \stdClass();
+			$messageObj->message = $message;
+			$messageObj->type = $type;
+			$messageObj->icon = $icon;
 		} elseif (is_object($message) and isset($message->message)) {
 			if (isset($message->message->message)) {
 				$messageObj = $message->message;
