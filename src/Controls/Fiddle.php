@@ -80,6 +80,8 @@ class Fiddle extends \Nette\Application\UI\Control {
 			$lastError = error_get_last();
 			@eval($source.";");
 
+			$out = ob_get_clean();
+
 			$currentError = error_get_last();
 			if ($currentError or $lastError) {
 				if (
@@ -88,13 +90,9 @@ class Fiddle extends \Nette\Application\UI\Control {
 					or $lastError["file"] != $currentError["file"]
 					or $lastError["line"] != $currentError["line"]
 				) {
-					$out = "PHP error: $currentError[file], line $currentError[line]\n\n$currentError[message]";
+					$out .= "\n\nPHP error: $currentError[file], line $currentError[line]\n\n$currentError[message]";
 					$this->formatOutput = "text";
 				}
-			}
-
-			if (!$out) {
-				$out = ob_get_clean();
 			}
 
 		} catch (\Exception $e) {
