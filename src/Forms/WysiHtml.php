@@ -18,23 +18,23 @@ class WysiHtml extends \Nette\Forms\Controls\TextArea implements \ArrayAccess {
 
 	protected $parameters = array(
 		"toolbar" => array(
-			"emphasis"=>array(
+			"emphasis" => array(
 				"small" => false
 			),
-			"font-styles"=>true,
-			"lists"=>true,
-			"clearFormatHran"=>true,
-			"link"=>true,
+			"font-styles" => true,
+			"lists" => true,
+			"clearFormatHran" => true,
+			"link" => true,
 			"blockquote" => false,
-			"html"=>false,
+			"html" => false,
 			"color" => true,
-			"image"=>false,
-			"fa"=>true
+			"image" => false,
+			"fa" => true
 		),
-		"customTemplates"=>"hran2.wysiHtml5CustomTemplates",
-		"useLineBreaks"=>false,
-		"stylesheets"=>["/css/wysihtml5-inner.css"],
-		"locale"=>"cs-CZ"
+		"customTemplates" => "hran2.wysiHtml5CustomTemplates",
+		"useLineBreaks" => false,
+		"stylesheets" => array("/css/wysihtml5-inner.css"),
+		"locale" => "cs-CZ"
 	);
 
 	protected $width = "100%";
@@ -67,7 +67,7 @@ class WysiHtml extends \Nette\Forms\Controls\TextArea implements \ArrayAccess {
 
 	function getControl() {
 		$control = parent::getControl();
-		$control->class[]="wysihtml5 form-control";
+		$control->class[]="wysihtml5 form-control no-live-validation";
 		if ($this->width) $control->style["width"]=$this->width;
 		if ($this->height) $control->style["height"]=$this->height;
 

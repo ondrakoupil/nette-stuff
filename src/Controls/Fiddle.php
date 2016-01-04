@@ -99,6 +99,9 @@ class Fiddle extends \Nette\Application\UI\Control {
 
 		} catch (\Exception $e) {
 			$out = get_class($e)." catched: ".$e->getMessage();
+			$out .= "\nFile: " . $e->getFile();
+			$out .= "\nLine: " . $e->getLine();
+			$out .= "\n\n" . $e->getTraceAsString();
 			ob_end_clean();
 		}
 
