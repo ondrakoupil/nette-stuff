@@ -6,4 +6,5 @@ vendor/
 /tests/*/output
 /nbproject/private/
 /zdroje/
+.idea
 .DS_Store

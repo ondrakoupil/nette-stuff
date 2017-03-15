@@ -2,6 +2,7 @@
     "name": "ondrakoupil/nette-stuff",
     "description": "Some useful thingies for Nette framework",
     "license": "MIT",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Ondřej Koupil",
@@ -10,7 +11,7 @@
     ],
     "require": {
         "nette/nette": "^2.3",
-		"ondrakoupil/tools": "~0.0.5"
+		"ondrakoupil/tools": "~0.1"
     },
     "require-dev": {
         "nette/tester": "^1.4",
