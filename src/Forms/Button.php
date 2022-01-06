@@ -2,6 +2,8 @@
 
 namespace OndraKoupil\Nette\Forms;
 
+use Nette\Utils\Html;
+
 /**
  * Univerzální formulářový prvek pro tlačítka s možností nastavit třídu a typ a případně ikonu.
  *
@@ -23,7 +25,7 @@ class Button extends \Nette\Forms\Controls\Button {
 		if ($class) $proto->addClass($class);
 	}
 
-	function getControl($caption = NULL) {
+	function getControl($caption = NULL): Html {
 		$control = parent::getControl($caption);
 
 		if ($control->value) unset($control->value);

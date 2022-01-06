@@ -30,8 +30,6 @@ class GenericMessagesControl extends \Nette\Application\UI\Control {
 			}
 		}
 
-
-		parent::__construct($parent, $name);
 	}
 
 	function getHideIfEmpty() {

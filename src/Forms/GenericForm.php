@@ -39,7 +39,6 @@ class GenericForm extends \Nette\Application\UI\Control {
 	protected $renderCallbacks=array();
 
 	function __construct(\Nette\Forms\Form $form, $templatePath, \Nette\ComponentModel\IContainer $parent = NULL, $name = NULL) {
-		parent::__construct($parent, $name);
 		$this->form=$form;
 		$this->templatePath=$templatePath;
 	}
@@ -62,7 +61,8 @@ class GenericForm extends \Nette\Application\UI\Control {
 		$this->template->form=$this->form;
 
 		foreach ($this->renderCallbacks as $cb) {
-			\Nette\Utils\Callback::invokeArgs($cb, array($this,$this->form,$this->template));
+			$cb($this,$this->form,$this->template);
+			//\Nette\Utils\Callback::invokeArgs($cb, array($this,$this->form,$this->template));
 		}
 
 		$this->template->render();
